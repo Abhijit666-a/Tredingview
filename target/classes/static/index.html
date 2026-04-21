@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeIntel AI | Real-time Signal Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark-mode">
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <div class="logo-container">
+                <div class="logo-icon">▲</div>
+                <h1>Trade<span>Intel</span> AI</h1>
+            </div>
+            <div class="status-panel">
+                <div class="status-item">
+                    <span class="label">Engine:</span>
+                    <span id="engine-status" class="status-val status-active">ACTIVE</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Sync:</span>
+                    <span id="last-sync" class="status-val">Waiting...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main>
+            <div class="dashboard-grid">
+                <!-- Left Column: Active Watchlist -->
+                <section class="watchlist-section">
+                    <div class="section-header">
+                        <h2>Market Watch</h2>
+                        <span class="badge">RELIANCE.BSE</span>
+                    </div>
+                    <div class="price-card" id="price-card">
+                        <div class="card-head">
+                            <span class="symbol">RELIANCE</span>
+                            <span class="change-tag" id="price-change">+0.00%</span>
+                        </div>
+                        <div class="price-display">
+                            <span class="currency">₹</span>
+                            <span id="current-price" class="value">0,000.00</span>
+                        </div>
+                        <div class="resistance-line">
+                            <span class="label">Resistance (Breakout Level)</span>
+                            <span class="value">₹2,950.00</span>
+                        </div>
+                    </div>
+
+                    <div class="sentiment-gauge">
+                        <h3>AI Sentiment Snapshot</h3>
+                        <div class="gauge-container">
+                            <div class="gauge-track">
+                                <div id="sentiment-indicator" class="gauge-fill" style="width: 50%;"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span>Bearish</span>
+                                <span>Neutral</span>
+                                <span>Bullish</span>
+                            </div>
+                        </div>
+                        <p id="sentiment-summary" class="summary-text">Waiting for news analysis...</p>
+                    </div>
+                </section>
+
+                <!-- Right Column: Trade Signals -->
+                <section class="signals-section">
+                    <div class="section-header">
+                        <h2>Live Intelligence Signals</h2>
+                        <div class="signal-count" id="signal-count">0 Signals</div>
+                    </div>
+                    <div class="signals-list" id="signals-list">
+                        <!-- Signals injected here -->
+                        <div class="empty-state">
+                            <div class="loader"></div>
+                            <p>Scanning markets for patterns...</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- News Feed Footer -->
+        <footer>
+            <div class="news-ticker">
+                <span class="ticker-label">LATEST AI ANALYSIS:</span>
+                <div class="ticker-content">
+                    <span id="latest-headline">Monitoring real-time news headlines via Gemini 2.0...</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

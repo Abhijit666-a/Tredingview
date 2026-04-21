@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: tradeintel-ai
+
+  datasource:
+    url: jdbc:h2:mem:tradeintel_db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false   # Angular needs ISO-8601 strings, not arrays
+    time-zone: Asia/Kolkata
+
+  ai:
+    google:
+      gemini:
+        api-key: AIzaSyCIZo70J28NCoB6i7DjsyLKAmFXUUutxHM
+        chat:
+          options:
+            model: gemini-1.5-flash
+            temperature: 0.3
+
+tradeintel:
+  smartapi:
+    totp-secret: "K62DRS6JITF6ANOJG6HND7NHLE"
+    client-id: "A50466995"
+    password: "3477"
+    api-key: "OT7DkDIR"
+  binance:
+    api-key: "M01mSRwOstjWRJd6tmQbph6hd2eJjnyQIyGRM6r2V603pfroAry4P7wwUSh8AxMs"
+    api-secret: "H7XFq4YXmmKsWl5bxC6WbdHXEXcvNesSwBxB5ZNuBHUfsjzIKeKE7QEdrBaRLYhA"
+  scheduler:
+    enabled: true
+    interval-ms: 1000
+  stock:
+    default-symbol: RELIANCE.NS
+    default-name: Reliance Industries
+    default-sector: Energy
+  breakout:
+    previous-high: 2950.00
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.tradeintel: DEBUG
+    org.springframework.ai: DEBUG
