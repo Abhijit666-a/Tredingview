@@ -12,7 +12,7 @@ export class SignalService {
   private readonly http = inject(HttpClient);
   
   // Base URL for API
-  private readonly BASE_URL = 'http://localhost:8080/api';
+  private readonly BASE_URL = 'https://tredingview.onrender.com/api';
 
   /**
    * Real-time polling: Fetches latest signals every 1 second.
