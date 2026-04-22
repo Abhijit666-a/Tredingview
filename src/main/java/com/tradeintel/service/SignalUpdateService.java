@@ -26,7 +26,7 @@ public class SignalUpdateService {
     }
 
     public void broadcastSignal(TradeSignal signal) {
-        log.info("📢 Broadcasting signal to UI: {}", signal.getStock().getSymbol());
+// log.info("📢 Broadcasting signal to UI: {}", signal.getStock().getSymbol());
         sendToAll("trade-signal", signal);
     }
 
