@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/news")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://tredingview.onrender.com"})
 public class NewsAnalysisController {
 
     private final NewsAnalysisRepository newsAnalysisRepository;

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/signals")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://tredingview.onrender.com"})
 public class TradeSignalController {
 
     private final TradeSignalRepository tradeSignalRepository;
