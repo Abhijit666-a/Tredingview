@@ -1,10 +1,13 @@
-<div class="min-h-screen bg-[#0d0f14] text-slate-300 font-sans p-3 md:p-6">
+<div class="min-h-screen bg-[#06070a] text-slate-400 font-sans p-3 md:p-6 relative overflow-hidden">
+  <!-- Algo Visual Overlays -->
+  <div class="scanline"></div>
+  <div class="fixed inset-0 terminal-grid opacity-20 pointer-events-none z-0"></div>
   <!-- Top Navigation Header -->
   <header class="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 bg-[#1e222d] p-4 rounded-2xl border border-white/5 shadow-2xl">
     <div class="flex items-center gap-6">
       <div class="flex flex-col">
-        <h1 class="text-sm md:text-xl font-black text-white tracking-widest uppercase italic">TradeIntel<span class="text-cyan-500">AI</span></h1>
-        <p class="text-[8px] font-black uppercase tracking-[0.3em] text-cyan-500/50">Neural Arbitrage Engine</p>
+        <h1 class="text-sm md:text-2xl font-black text-white tracking-widest uppercase italic algo-glow-cyan">TradeIntel<span class="text-cyan-400">CORE</span></h1>
+        <p class="text-[7px] font-black uppercase tracking-[0.5em] text-cyan-500/40">Algorithmic Arbitrage Protocol v2.4</p>
       </div>
     </div>
 
@@ -22,8 +25,8 @@
                class="w-full bg-[#161922] border border-white/10 rounded-xl px-5 py-3 text-xs md:text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-all placeholder:text-slate-600 font-bold uppercase tracking-widest text-center md:text-left">
       </div>
       <button (click)="onScanSubmit(symbolInput.value)" 
-              class="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white px-8 py-3 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-[0.2em] shadow-lg shadow-cyan-900/20 transition-all transform active:scale-95 border border-white/10 whitespace-nowrap">
-        SUBMIT SCAN
+              class="w-full sm:w-auto bg-cyan-600/20 hover:bg-cyan-500/30 text-cyan-400 px-8 py-3 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all transform active:scale-95 border border-cyan-500/30 whitespace-nowrap">
+        INITIALIZE SCAN
       </button>
     </div>
 
@@ -96,13 +99,13 @@
                          <div class="font-black text-white px-2 py-1 rounded bg-white/5 inline-block">{{ sig.stock.symbol }}</div>
                          <div class="text-[8px] text-slate-600 uppercase mt-1">{{ sig.stock.sector }}</div>
                        </td>
-                       <td class="p-4 text-center">
-                          <div class="flex flex-col items-center">
-                             <div class="text-[10px] font-black text-orange-400 font-mono">₹{{ formatPrice(sig.entryPrice * 0.999) }}</div>
-                             <div class="text-[7px] text-slate-500 uppercase font-black">AI Breakout Origin</div>
-                          </div>
-                       </td>
-                       <td class="p-4 text-right font-mono text-white">₹{{ formatPrice(sig.entryPrice) }}</td>
+                        <td class="p-4 text-center">
+                           <div class="flex flex-col items-center">
+                              <div class="text-[10px] font-black text-orange-400 font-mono-algo">₹{{ formatPrice(sig.entryPrice * 0.999) }}</div>
+                              <div class="text-[7px] text-slate-500 uppercase font-black">AI Breakout Origin</div>
+                           </div>
+                        </td>
+                        <td class="p-4 text-right font-mono-algo text-white text-xs">₹{{ formatPrice(sig.entryPrice) }}</td>
                        <td class="p-4">
                           <div class="w-full max-w-[200px] mx-auto space-y-2">
                              <div class="flex justify-between text-[8px] font-black uppercase text-slate-500 mb-1">
@@ -161,13 +164,13 @@
                @for (sig of uniqueSignals().slice(0, 10); track sig.id) {
                  @if (!isTradeTaken(sig.id)) {
                    <tr class="border-b border-white/5 hover:bg-white/[0.02] cursor-pointer transition-all duration-300" (click)="openModal(sig)">
-                     <td class="p-4">
-                       <div class="font-black text-white italic uppercase">{{ sig.stock.symbol }}</div>
-                       <div class="text-[8px] text-slate-600 uppercase">{{ sig.stock.sector }}</div>
-                     </td>
-                     <td class="p-4 text-right font-mono text-white">₹{{ formatPrice(sig.entryPrice) }}</td>
-                     <td class="p-4 text-right font-mono text-green-500">₹{{ formatPrice(sig.targetPrice) }}</td>
-                     <td class="p-4 text-right font-mono text-red-500">₹{{ formatPrice(sig.stopLoss) }}</td>
+                      <td class="p-4">
+                        <div class="font-black text-white italic uppercase tracking-tighter">{{ sig.stock.symbol }}</div>
+                        <div class="text-[8px] text-slate-600 uppercase font-bold">{{ sig.stock.sector }}</div>
+                      </td>
+                      <td class="p-4 text-right font-mono-algo text-white">₹{{ formatPrice(sig.entryPrice) }}</td>
+                      <td class="p-4 text-right font-mono-algo text-green-400 algo-glow-green">₹{{ formatPrice(sig.targetPrice) }}</td>
+                      <td class="p-4 text-right font-mono-algo text-red-400 algo-glow-red">₹{{ formatPrice(sig.stopLoss) }}</td>
                      <td class="p-4 italic text-slate-400">{{ sig.patternName }}</td>
                      <td class="p-4 text-center">
                        <span class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">

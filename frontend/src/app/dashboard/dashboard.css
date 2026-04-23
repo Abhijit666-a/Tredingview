@@ -25,3 +25,41 @@
 .bg-gray-900.border {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* Algo Glow Effects */
+.algo-glow-green {
+  text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+.algo-glow-red {
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+.algo-glow-cyan {
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+}
+
+.terminal-grid {
+  background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.scanline {
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, rgba(34, 211, 238, 0.05), transparent);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  pointer-events: none;
+  animation: scanline 8s linear infinite;
+}
+
+.font-mono-algo {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+}
