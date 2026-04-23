@@ -64,9 +64,19 @@ public class TechnicalAnalysisService {
         BigDecimal sma = calculateSMA(prices, period);
         BigDecimal varianceSum = BigDecimal.ZERO;
         for (int i = prices.size() - period; i < prices.size(); i++) {
-            varianceSum = varianceSum.add(prices.get(i).subtract(sma).pow(2));
+            BigDecimal diff = prices.get(i).subtract(sma);
+            varianceSum = varianceSum.add(diff.pow(2));
         }
-        return BigDecimal.valueOf(Math.sqrt(varianceSum.divide(BigDecimal.valueOf(period), MC).doubleValue())).setScale(2, RoundingMode.HALF_UP);
+        double variance = varianceSum.divide(BigDecimal.valueOf(period), MC).doubleValue();
+        return BigDecimal.valueOf(Math.sqrt(variance)).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal[] calculateBollingerBands(List<BigDecimal> prices, int period) {
+        BigDecimal sma = calculateSMA(prices, period);
+        BigDecimal stdDev = calculateVolatility(prices, period);
+        BigDecimal upper = sma.add(stdDev.multiply(new BigDecimal("2")));
+        BigDecimal lower = sma.subtract(stdDev.multiply(new BigDecimal("2")));
+        return new BigDecimal[]{upper, lower, sma};
     }
 
     /**
@@ -102,11 +112,21 @@ public class TechnicalAnalysisService {
     }
 
     public double computeScientificConfidence(BigDecimal price, BigDecimal sma, BigDecimal rsi, String pattern) {
-        double score = 0.5;
-        if (rsi.compareTo(new BigDecimal("65")) > 0) score += 0.2;
-        if (rsi.compareTo(new BigDecimal("35")) < 0) score += 0.2;
-        if (pattern.contains("Double") || pattern.contains("Recovery")) score += 0.25;
-        if (price.compareTo(sma) > 0) score += 0.05;
+        double score = 0.45;
+        // RSI Logic
+        if (rsi.compareTo(new BigDecimal("75")) > 0) score += 0.35; // Breakout strength
+        else if (rsi.compareTo(new BigDecimal("25")) < 0) score += 0.35; // Reversal strength
+        else if (rsi.compareTo(new BigDecimal("60")) > 0) score += 0.15;
+        else if (rsi.compareTo(new BigDecimal("40")) < 0) score += 0.15;
+
+        // Pattern Logic
+        if (pattern.contains("Double Bottom") || pattern.contains("V-Pulse")) score += 0.25;
+        if (pattern.contains("Breakout")) score += 0.20;
+
+        // Alignment Logic
+        if (price.compareTo(sma) > 0 && rsi.compareTo(new BigDecimal("50")) > 0) score += 0.15;
+        if (price.compareTo(sma) < 0 && rsi.compareTo(new BigDecimal("50")) < 0) score += 0.15;
+
         return Math.min(0.99, Math.max(0.1, score));
     }
 }

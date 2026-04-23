@@ -101,26 +101,35 @@ public class TradeSignalEngine {
 
             BigDecimal rsi = technicalAnalysisService.calculateRSI(fullHistory, 14);
             BigDecimal ema20 = technicalAnalysisService.calculateEMA(fullHistory, 20);
+            BigDecimal[] bb = technicalAnalysisService.calculateBollingerBands(fullHistory, 20);
             String pattern = technicalAnalysisService.detectPattern(fullHistory);
 
             BigDecimal localResistance = fullHistory.subList(Math.max(0, fullHistory.size()-20), fullHistory.size()).stream().max(BigDecimal::compareTo).orElse(currentPrice);
             BigDecimal localSupport = fullHistory.subList(Math.max(0, fullHistory.size()-20), fullHistory.size()).stream().min(BigDecimal::compareTo).orElse(currentPrice);
 
-            boolean isBuyPattern = pattern.contains("Bottom") || pattern.contains("Recovery") || currentPrice.compareTo(localResistance.multiply(new BigDecimal("1.0002"))) > 0;
-            boolean isSellPattern = (pattern.contains("Bearish") && currentPrice.compareTo(localSupport) < 0) || currentPrice.compareTo(localSupport.multiply(new BigDecimal("0.9998"))) < 0;
+            // Bollinger Breakout Logic
+            boolean bbUpperBreakout = currentPrice.compareTo(bb[0]) > 0;
+            boolean bbLowerBreakout = currentPrice.compareTo(bb[1]) < 0;
+
+            boolean isBuyPattern = pattern.contains("Bottom") || pattern.contains("Recovery") || bbUpperBreakout || currentPrice.compareTo(localResistance.multiply(new BigDecimal("1.0002"))) > 0;
+            boolean isSellPattern = (pattern.contains("Bearish") && currentPrice.compareTo(localSupport) < 0) || bbLowerBreakout || currentPrice.compareTo(localSupport.multiply(new BigDecimal("0.9998"))) < 0;
 
             if (!isBuyPattern && !isSellPattern && (config.sector.equals("Equity") || config.sector.equals("Index"))) {
-                if (currentPrice.compareTo(ema20.multiply(new BigDecimal("1.001"))) > 0 && rsi.compareTo(new BigDecimal("50")) > 0) {
+                if (currentPrice.compareTo(ema20.multiply(new BigDecimal("1.001"))) > 0 && rsi.compareTo(new BigDecimal("55")) > 0) {
                     isBuyPattern = true;
-                } else if (currentPrice.compareTo(ema20.multiply(new BigDecimal("0.999"))) < 0 && rsi.compareTo(new BigDecimal("50")) < 0) {
+                } else if (currentPrice.compareTo(ema20.multiply(new BigDecimal("0.999"))) < 0 && rsi.compareTo(new BigDecimal("45")) < 0) {
                     isSellPattern = true;
                 }
             }
 
-            if (isBuyPattern && rsi.compareTo(new BigDecimal("40")) > 0) {
-                generateSignal(config, currentPrice, rsi, ema20, pattern, SignalType.CALL);
-            } else if (isSellPattern && rsi.compareTo(new BigDecimal("60")) < 0) {
-                generateSignal(config, currentPrice, rsi, ema20, pattern, SignalType.PUT);
+            double confidence = technicalAnalysisService.computeScientificConfidence(currentPrice, ema20, rsi, pattern);
+            if (bbUpperBreakout || bbLowerBreakout) confidence += 0.1;
+
+            // ULTRA-PRECISION FILTER: Only generate signal if confidence > 85%
+            if (isBuyPattern && rsi.compareTo(new BigDecimal("40")) > 0 && confidence > 0.85) {
+                generateSignal(config, currentPrice, rsi, ema20, pattern + (bbUpperBreakout ? " + BB Breakout" : ""), SignalType.CALL, confidence);
+            } else if (isSellPattern && rsi.compareTo(new BigDecimal("60")) < 0 && confidence > 0.85) {
+                generateSignal(config, currentPrice, rsi, ema20, pattern + (bbLowerBreakout ? " + BB Breakdown" : ""), SignalType.PUT, confidence);
             }
         }
     }
@@ -165,7 +174,7 @@ public class TradeSignalEngine {
         return new MarketData(history.get(history.size() - 1), history);
     }
 
-    private void generateSignal(StockConfig config, BigDecimal price, BigDecimal rsi, BigDecimal ema, String pattern, SignalType type) {
+    private void generateSignal(StockConfig config, BigDecimal price, BigDecimal rsi, BigDecimal ema, String pattern, SignalType type, double confidence) {
         String displaySymbol = config.symbol;
         String patternName = "AI Statistical Pulse";
 
@@ -199,9 +208,8 @@ public class TradeSignalEngine {
         final String sec = displaySector;
         Stock stock = stockRepository.findBySymbol(sym).orElseGet(() -> stockRepository.save(Stock.builder().symbol(sym).name(sym).sector(sec).build()));
 
-        double confidence = technicalAnalysisService.computeScientificConfidence(price, ema, rsi, pattern);
-        BigDecimal sl = (type == SignalType.CALL) ? price.multiply(new BigDecimal("0.995")) : price.multiply(new BigDecimal("1.005"));
-        BigDecimal target = (type == SignalType.CALL) ? price.multiply(new BigDecimal("1.02")) : price.multiply(new BigDecimal("0.98"));
+        BigDecimal sl = (type == SignalType.CALL) ? price.multiply(new BigDecimal("0.997")) : price.multiply(new BigDecimal("1.003"));
+        BigDecimal target = (type == SignalType.CALL) ? price.multiply(new BigDecimal("1.015")) : price.multiply(new BigDecimal("0.985"));
 
         // Refined Pattern Identification for Real-Money Users
         if (rsi.compareTo(new BigDecimal("70")) > 0) patternName = "AI Overbought RSI";
